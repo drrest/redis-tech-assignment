@@ -1,0 +1,74 @@
+services:
+  redis:
+    build:
+      context: .
+      dockerfile: Dockerfile.redis
+    container_name: redis-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/data
+    networks:
+      - con-service-network
+
+  consumers:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    container_name: consumers
+    init: true
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      GROUP_SIZE: 10
+    volumes:
+      - ./logs:/app/logs
+      - ./:/app
+    depends_on:
+      - redis
+    networks:
+      - con-service-network
+
+  monitoring:
+    build:
+      context: .
+      dockerfile: Dockerfile.monitoring
+    container_name: monitoring
+    init: true
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - redis
+      - consumers
+    networks:
+      - con-service-network
+
+  consumer-manager:
+    build:
+      context: .
+      dockerfile: Dockerfile.consumer-manager
+    container_name: consumer-manager
+    init: true
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - redis
+      - consumers
+    networks:
+      - con-service-network
+
+  redis-insight:
+    image: redis/redisinsight:latest
+    ports:
+      - '5540:5540'
+    volumes:
+      - ./redis-insight:/data
+    networks:
+      - con-service-network
+
+networks:
+  con-service-network:
+    driver: bridge
+

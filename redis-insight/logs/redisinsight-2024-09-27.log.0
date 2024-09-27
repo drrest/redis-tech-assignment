@@ -1,0 +1,3 @@
+9/27/2024, 12:39:38 AM | INFO | DatabaseInfoService | Getting database overview for: 6bcc6bfe-c798-4e99-8ed1-3f169b17f98b | [object Object]
+9/27/2024, 12:39:38 AM | INFO | DatabaseClientFactory | Trying to get existing redis client. | [object Object]
+9/27/2024, 12:40:18 AM | INFO |  | Signal SIGTERM received. Shutting down... | [object Object]
